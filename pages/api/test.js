@@ -1,9 +1,26 @@
 import dbConnect from "../../utils/dbConnect";
 import word from '../../models/word';
+import cors from 'cors';
 // import post
 dbConnect();
 
+const corsHeader = cors({
+  methods: ['POST', 'GET', 'HEAD'],
+})
+
+function runMiddleware(req,res,fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result)
+      }
+      return resolve(result)
+    })
+  })
+}
+
 export default async (req,res) => {
+    await runMiddleware(req, res, corsHeader);
     const {method} = req;
     switch(method){
       case 'GET':
